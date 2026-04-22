@@ -1,0 +1,23 @@
+Primary Structure - Team Leaderboard (sorted set):
+This feature implements team leaderboards at events. Each eventKey (for example, 2025gpr - the 
+Greater Pittsburgh Regional for the year 2025) has its own leaderboard where each team has their
+own score for ranking purposes but cannot exist in the structure twice for logistical reasons.
+
+Key Pattern: leaderboard:event:{eventKey}
+Values: Teams (2228, 1595, etc)
+Scores/ranks: Average total match score for that team at that event
+
+Supporting structure — Team Stats Cache (hash)
+This feature implemenmts team objects stored withing events with their own stats/attributes. The
+hash structure allows for easy access to the specific attributes for teams at specific events.
+
+Key Pattern: teamStats:event:{eventKey}:team:{teamNumber}
+Fields: avgAuto, avgTeleop, avgEndgame, climbSuccessRate, reportCount, lastUpdated
+
+Supporting structure — Recent Scouting Feed (list)
+This feature implements a list with multivalued strings that represent scouting events. It is
+esentially a feed that logs scouters doing scouting with timestamps but without the actual report
+content
+
+Key Pattern: recentScouts:event:{eventKey}
+Value pattern: {scoutId, teamNumber, matchNumber, timestamp} example: {\"scoutId\":\"alex\",\"teamNumber\":2228,\"matchNumber\":14,\"timestamp\":1729531200}"
