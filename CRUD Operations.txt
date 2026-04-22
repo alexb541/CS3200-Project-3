@@ -1,0 +1,71 @@
+Initialize: FLUSHALL
+
+
+
+Team Leaderboard:
+
+
+Create:
+
+# adds teams with a starting score of 0
+ZADD leaderboard:event:2025gpr 0 2228 0 254 0 1678 0 971
+
+
+Read:
+
+ZREVRANGE leaderboard:event:2025gpr 0 9 WITHSCORES     # top 10 teams
+ZREVRANGE leaderboard:event:2025gpr 0 -1 WITHSCORES    # full ranking
+ZSCORE    leaderboard:event:202gpr 2228                # one team's score
+ZREVRANK  leaderboard:event:2025gpr 2228                # one team's rank (0-indexed)
+ZCARD     leaderboard:event:2025gpr                     # number of teams tracked
+
+
+Update:
+
+# Incremental: a new scout report adds 45 points to team 2228's total
+ZINCRBY leaderboard:event:2026casf 45 2228
+
+# Absolute: recomputed average from MongoDB
+ZADD leaderboard:event:2026casf 87.3 2228
+
+
+Delete:
+
+ZREM leaderboard:event:2026casf 2228     # remove one team (e.g., team withdrew)
+DEL  leaderboard:event:2026casf          # wipe the entire leaderboard for that event
+
+
+Team Stats Cache:
+
+
+Create / Update:
+
+HSET teamStats:event:2026casf:team:2228 avgAuto 12.4 avgTeleop 58.1 climbSuccessRate 0.85 reportCount 7
+
+
+Read:
+
+HGETALL teamStats:event:2026casf:team:2228
+HGET    teamStats:event:2026casf:team:2228 climbSuccessRate
+
+
+Update:
+
+HSET    teamStats:event:2026casf:team:2228 lastUpdated 1729531200 # single field
+HINCRBY teamStats:event:2026casf:team:2228 reportCount 1 # increment counter
+
+
+Delete:
+
+HDEL teamStats:event:2026casf:team:2228 climbSuccessRate # one field
+DEL  teamStats:event:2026casf:team:2228 # whole hash
+
+
+Recent Scouting Feed:
+
+
+LPUSH recentScouts:event:2026casf "{\"scoutId\":\"alex\",\"teamNumber\":2228,\"matchNumber\":14,\"timestamp\":1729531200}"
+LTRIM recentScouts:event:2026casf 0 49        # keep only the 50 most recent
+LRANGE recentScouts:event:2026casf 0 -1        # read feed
+LREM  recentScouts:event:2026casf 1 "<value>"  # delete a specific entry
+DEL   recentScouts:event:2026casf              # clear feed
