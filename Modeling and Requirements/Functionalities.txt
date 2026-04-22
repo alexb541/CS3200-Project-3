@@ -1,0 +1,12 @@
+These following redis structures use various attributes from the UML model, except from the
+TeamMember entity.
+
+Team Leaderboard:
+At each competition, each team is ranked by their scores.
+
+Team Stats Cache:
+Each team at each competition has their own set of competition attributes, including
+avgAuto, avgTeleop, avgEndgame, climbSuccessRate, reportCount, lastUpdated.
+
+Recent Scouting Feed:
+A list of notifications of scouting reports that have occurred at a competition.
